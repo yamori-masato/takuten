@@ -10,16 +10,6 @@ class User < ApplicationRecord
 
 
 
-    def attributes
-        {
-            'id' => nil,
-            'name' => nil,
-            'nickname' => nil,
-            'grade' => nil,
-            'band_ids' => nil,
-        }
-    end
-
     # def band_ids
     #     bands.map{|band| band.id}
     # end

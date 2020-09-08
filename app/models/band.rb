@@ -4,11 +4,5 @@ class Band < ApplicationRecord
 
     validates :name, presence: true, length: {maximum: 30}, uniqueness: true
 
-    def attributes
-        {
-            'id' => nil,
-            'name' => nil,
-            'user_ids' => nil,
-        }
-    end
+ 
 end

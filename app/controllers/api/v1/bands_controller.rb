@@ -7,12 +7,12 @@ module Api
       # GET /bands
       def index
         @bands = current_user.bands.all
-        render json: @bands
+        render json: @bands, each_serializer: BandSerializer
       end
 
       # GET /bands/1
       def show
-        render json: @band
+        render json: @band, serializer: BandSerializer
       end
 
 
@@ -27,19 +27,19 @@ module Api
 
       # PATCH/PUT /bands/1
       def update
-        #user_idsのバリデーション-------------------------------------
+        #user_idsのバリデーション(あとでmodel層に引越し)-------------------------------------
         #excは、(nil: user_idsが送られなかった時)([]: user_idsが正常な値の時)([1,3]: user_idsが不正な値の時)
         exc = band_params[:user_ids]&.reject do |user_id|
           User.find_by(id: user_id)
         end
         if exc && (not exc.empty?)
-          render json: "user_ids: #{exc} is invalid", status: :unprocessable_entity
+          render plain: "user_ids: #{exc} is invalid", status: :unprocessable_entity
           return
         end
         #----------------------------------------------------------
 
         if @band.update(band_params)
-          render json: @band
+          render json: @band, serializer: BandSerializer
         else
           render json: @band.errors, status: :unprocessable_entity
         end
@@ -70,6 +70,7 @@ module Api
         # Use callbacks to share common setup or constraints between actions.
         def set_current_users_band
           @band = current_user.bands.find(params[:id])
+          # 見つからなかったらエラー吐くようにする
         end
 
         # Only allow a trusted parameter "white list" through.

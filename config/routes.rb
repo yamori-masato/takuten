@@ -17,6 +17,7 @@ Rails.application.routes.draw do
 
       # 一般利用者は、token有りのリクエストを送る事で自身や自身のバンドをみれる。
       resource :user, only: [:update, :show]
+      resources :users, only: [:index]
       resources :bands do
         # 自身のバンドへの加入と退会
         member do

@@ -9,18 +9,18 @@ module Api
       # GET /users
       def index
         @users = User.all
-        render json: @users
+        render json: @users, each_serializer: UserSerializer
       end
 
       # GET /user
       def show
-        render json: @user
+        render json: @user, serializer: UserSerializer
       end
 
       # PATCH/PUT /user
       def update
         if @user.update(user_params)
-          render json: @user
+          render json: @user, serializer: UserSerializer
         else
           render json: @user.errors, status: :unprocessable_entity
         end
