@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  
+
   root to: 'users#index'
   post 'login/login'
 
@@ -8,24 +8,32 @@ Rails.application.routes.draw do
     namespace :v1 do
 
 
-      # 管理者はuserまで触れる
+      # 管理者はuserまで触れる api/v1の外のがよさそう
       namespace :admin do
         resources :users do 
-          resources :bands #my band controll
+          resources :bands #admin側でネストする意味なさそう
         end
+        resources :regulars, only: [:index, :show, :create, :update, :destroy]
       end
 
       # 一般利用者は、token有りのリクエストを送る事で自身や自身のバンドをみれる。
       resource :user, only: [:update, :show]
       resources :users, only: [:index]
       resources :bands do
-        # 自身のバンドへの加入と退会
         member do
-          # post :join
-          patch :leave
+          patch :leave# 自身のバンドから退会
         end
+
+        #単発削除
+        resource :regular, only: [:destroy]
+        resource :nonregular, only: [:destroy]
       end
       
+      #カレンダーと正規コマカレンダー
+      get 'calendar/:year/:month', to: 'timetables#month'
+      get 'calendar/:year/:month/:date', to: 'timetables#date'
+      resources :regulars, only: [:index]
+
 
     end
   end

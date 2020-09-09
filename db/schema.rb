@@ -10,13 +10,44 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_18_183208) do
+ActiveRecord::Schema.define(version: 2020_09_08_173606) do
 
   create_table "bands", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_bands_on_name", unique: true
+  end
+
+  create_table "exception_times", force: :cascade do |t|
+    t.integer "recurring_id", null: false
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recurring_id"], name: "index_exception_times_on_recurring_id"
+  end
+
+  create_table "onetimes", force: :cascade do |t|
+    t.date "date", null: false
+    t.time "time_start", null: false
+    t.time "time_end", null: false
+    t.integer "band_id"
+    t.string "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["band_id"], name: "index_onetimes_on_band_id"
+  end
+
+  create_table "recurrings", force: :cascade do |t|
+    t.date "date_start", null: false
+    t.date "date_end"
+    t.time "time_start", null: false
+    t.time "time_end", null: false
+    t.integer "band_id"
+    t.string "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["band_id"], name: "index_recurrings_on_band_id"
   end
 
   create_table "user_bands", force: :cascade do |t|

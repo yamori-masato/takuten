@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+    before_create -> { self.nickname ||= self.name }
+
+
     has_secure_password
     has_secure_token
 
@@ -7,10 +10,5 @@ class User < ApplicationRecord
 
     validates :name, presence: true, length: {maximum: 15}, uniqueness: true
     validates :password, presence: true, confirmation: true, on: :create
-
-
-
-    # def band_ids
-    #     bands.map{|band| band.id}
-    # end
+    
 end

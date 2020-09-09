@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date: 2020-09-09
+  time_start: 2020-09-09 02:31:55
+  time_end: 2020-09-09 02:31:55
+  band: one
+  type: 
+
+two:
+  date: 2020-09-09
+  time_start: 2020-09-09 02:31:55
+  time_end: 2020-09-09 02:31:55
+  band: two
+  type: 
