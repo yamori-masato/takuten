@@ -9,6 +9,7 @@ class User < ApplicationRecord
     has_many :bands, through: :user_bands
 
     validates :name, presence: true, length: {maximum: 15}, uniqueness: true
+    validates :nickname, length: {maximum: 15}
     validates :password, presence: true, confirmation: true, on: :create
-    
+
 end

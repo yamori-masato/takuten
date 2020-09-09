@@ -50,3 +50,4 @@ gem 'ice_cube'
 gem 'active_model_serializers'
 
 gem 'rspec-rails'
+gem 'factory_bot_rails'
