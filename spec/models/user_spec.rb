@@ -13,12 +13,12 @@ RSpec.describe User, type: :model do
             describe '長さ' do
                 context '15文字以内の時' do
                     it '正しい' do
-                        expect(build(:user, name: '123456789012345')).to be_valid
+                        expect(build(:user, name: 'a'*15)).to be_valid
                     end
                 end
                 context '16文字以上の時' do
                     it '正しくない' do
-                        expect(build(:user, name: '1234567890123456')).not_to be_valid
+                        expect(build(:user, name: 'a'*16)).not_to be_valid
                     end
                 end
             end
