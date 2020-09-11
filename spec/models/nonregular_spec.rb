@@ -13,7 +13,7 @@ RSpec.describe Activity::Nonregular, type: :model do
       end
     end
     describe 'validate_triple_booking' do
-      context '同じコマが既に2件予約されている時' do
+      context 'コマが既に2件予約されている時' do
         before do
           2.times do |n|
             @band = Band.create(name: "band#{n}")
@@ -26,17 +26,25 @@ RSpec.describe Activity::Nonregular, type: :model do
       end
     end
 
-
     describe 'validate_cannot_book_at_the_same_time' do
-      context '既に同じコマを同じバンドで予約する時' do
+      context '既に同じバンドで予約している時(nonregular)' do
+          before do
+            @band = Band.create(name: "band1")
+            create(:nonregular, band_id: @band.id)
+          end
+          it '登録できない' do
+            expect(build(:nonregular, band_id: @band.id)).not_to be_valid
+          end
+      end
+      context '既に同じバンドで予約している時(regular)' do
         before do
           @band = Band.create(name: "band1")
-          create(:nonregular, band_id: @band.id)
+          create(:regular, band_id: @band.id)
         end
         it '登録できない' do
           expect(build(:nonregular, band_id: @band.id)).not_to be_valid
         end
-      end
+    end
     end
   end
   
@@ -51,15 +59,15 @@ RSpec.describe Activity::Nonregular, type: :model do
           31.times{ create(:nonregular_allday_each_band) } 
         end
         let(:band_id) {nil}
-        context '引数が (2020-01-01, 2020-01-15) の時' do
-          let(:st) {1}
-          let(:ed) {15}
-          it {is_expected.to eq 15}
-        end
         context '引数が (2020-01-01, 2020-01-31) の時' do
           let(:st) {1}
           let(:ed) {31}
           it {is_expected.to eq 31}
+        end
+        context '引数が (2020-01-01, 2020-01-15) の時' do
+          let(:st) {1}
+          let(:ed) {15}
+          it {is_expected.to eq 15}
         end
         context '引数が (2020-01-05, 2020-01-12) の時' do
           let(:st) {5}

@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Recurring, type: :model do
-    let(:t) { Time.current }
+    let(:t) { Time.parse("2000/01/01 12:00:00") }
+
     describe 'バリデーション' do
         describe 'date_start' do
             context '未入力の時' do

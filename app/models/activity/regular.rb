@@ -1,6 +1,7 @@
 class Activity::Regular < Recurring
     include ActivityMixin
     after_create :create_exception_if_already_booked
+    
 
     #指定期間中の該当する日付のリストを返す。例 ["2020-09-02", "2020-09-09", ...]
     def occurs_between(st,ed)
@@ -12,7 +13,7 @@ class Activity::Regular < Recurring
         schedule.occurrences_between(st,ed).map{|o| o.to_date.to_s}
     end
     
-    #曜日を返す(日~月: 0~6)
+    #曜日を返す(日~土: 0~6)
     def week
         self.date_start.wday
     end
@@ -46,7 +47,7 @@ class Activity::Regular < Recurring
     ME = Time.current.end_of_month.to_date
 
     private
-        #繰り返しのどこかで予約が2つあったらそこだけ外す(ExceptionTimeを作成する)。
+        #繰り返しのどこかで予約が2つある、又は自身のバンドの非正規コマと被る場合、そこだけ外す(ExceptionTimeを作成する)。
         def create_exception_if_already_booked
             last = Onetime.maximum(:date)
             if last #1つもデータがない時nilを返す
@@ -55,21 +56,37 @@ class Activity::Regular < Recurring
                     os = t.new.one_day_occurrences(occurrence)
                     if os.find_all{|o| o[:time_start] == time_start_f}.length >= 3 #新たに追加したらコマ3被り
                         self.exception_times.build(date: occurrence).save! #除外の追加
+                    elsif os.find_all{|o| o[:time_start] == time_start_f && o[:band_id] == band_id}.length >= 2 #新たに追加したら自身のバンドの非正規コマと被り
+                        self.exception_times.build(date: occurrence).save! #除外の追加
                     end
                 end
             end
         end
-
-        #正規コマは1バンド1つしか登録できない(これがないとnewで更新されてしまう)↓new時(バリデーションより前)に古いデータが消されてしまう仕様らしいから意味ない
-        # def validate_cannot_register_twice
-        #     band = Band.find(band_id)
-        #     if band.regular
-        #         errors.add(:base,"正規コマは2つ以上登録できません。")
-        #     end
-        # end
-
-
-
-
-        
+    
 end
+# ※has_one - belong_to 関連付けの注意点
+
+# ① band.build_regularで作成すると、既に関連があった場合deleteされてしまう。
+#
+# なので、controller内では愚直に
+#
+# band = band.find(1)
+#
+# r = regular.new(date_start: ...)
+# if band.regular.nil?
+#   r.save!
+#   band.regular = r                             ...(★)
+#
+# のように書いたほうがいい
+
+
+# ② band.regularは常にuniqueになるが(①)、Regularレコードでband_id==1のものは1つとは限らない
+#
+# もし、既に Band(id:1)とRegular(id:1)が紐づいているとして
+# 新たに、r2 = Regular.create(..., band_id: 1)とした場合
+# r2レコードは保存されるが、band.regular.idは1のままである。
+# 
+# ①の ★ の行で、勝手にRegular(id:1)が消され(←大事)、新たに、band.regular.idが2となる。
+
+# つまり、新たな関連を作成すれば旧関連のレコードは勝手に削除されるが、
+# Regularレコードでband_idが同じものは、意図的に作れてしまう。(でもこれがないとそもそも ★ の行が書けなくなるから関連の変更ができなくなる?
