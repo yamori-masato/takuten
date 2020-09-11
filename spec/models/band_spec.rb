@@ -22,10 +22,6 @@ RSpec.describe Band, type: :model do
             end
         end
     end
-    describe 'アソシエーション' do
-        it 'has many nonregular'
-        it 'has one regular'
-    end
-    
+
   
 end

@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :band do
-    name {'band'}
+    sequence(:name){|n| "band#{n}"}
   end
 end

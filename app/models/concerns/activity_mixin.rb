@@ -11,6 +11,11 @@ module ActivityMixin
         def table(section_id)
             sec = SECTION[section_id]
             sec.map{|s| Time.zone.parse(s)}
+        end
+
+        def section_id(time_start, time_end)
+            st, ed = time_start.strftime("%H:%M:%S"), time_end.strftime("%H:%M:%S")
+            SECTION.index([st,ed])
         end   
     end
 

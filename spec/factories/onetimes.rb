@@ -1,8 +1,7 @@
 FactoryBot.define do
-  t = Time.parse("2000/01/01 00:00:00")
   factory :onetime do
-    date { t.to_date }
-    time_start { t.to_time }
-    time_end { t.since(1.hours).to_time }
+    date { Time.current.to_date }
+    time_start { Time.parse("09:00:00") }
+    time_end { Time.parse("11:00:00") }
   end
 end
