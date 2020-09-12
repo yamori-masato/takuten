@@ -37,7 +37,7 @@ class Api::V1::UsersController < ApplicationController
       # logger.debug("--------------------------")
       # logger.debug(params)
       # logger.debug("--------------------------")
-      params.permit(:name, :nickname, :grade)
+      params.permit(:nickname)
     end
 
 

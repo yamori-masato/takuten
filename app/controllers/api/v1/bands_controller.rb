@@ -31,7 +31,7 @@ class Api::V1::BandsController < ApplicationController
     exc = band_params[:user_ids]&.reject do |user_id|
       User.find_by(id: user_id)
     end
-    if exc && (not exc.empty?)
+    if exc && !exc.empty?
       render plain: "user_ids: #{exc} is invalid", status: :unprocessable_entity
       return
     end
@@ -49,6 +49,7 @@ class Api::V1::BandsController < ApplicationController
   # (ログインユーザをメンバーに含めた)バンドを新規作成
   def create
     @band = Band.new(band_params)
+    @band.user_ids = @band.user_ids.reject{|i| i == current_user.id} # 既にu1-b1が関連づけられている時に、u1.bands<<b1をするとそれぞれで関連がダブるから先に除外
     if @band.save
       current_user.bands << @band
       render json: @band, status: :created#201
