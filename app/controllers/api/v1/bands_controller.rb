@@ -26,15 +26,16 @@ class Api::V1::BandsController < ApplicationController
 
 
   # PATCH/PUT /bands/1
-  # アプリの仕様上、user_idsは変更前のものは消せない仕組み。 例) [1,2,3]->[2,3,4]としたら、勝手に[1,2,3,4](新旧の和集合)で登録する。(2行目)
+  # アプリの仕様上、user_idsは変更前のものは消せない仕組み。 例) [1,2,3]->[2,3,4]としたら、勝手に[1,2,3,4](新旧の和集合)で登録する。
   def update
     old_ids = @band.user_ids
     bp = band_params.to_h
-    bp[:user_ids] |= old_ids
+    bp[:user_ids] |= old_ids if band_params[:user_ids] #user_idsがリクエストパラメータに含まれる時、新旧の和集合で登録
+
     if @band.update(bp)
       render json: @band, serializer: BandSerializer
     else
-      render json: @band.errors, status: :unprocessable_entity
+      render json: @band.errors, status: :unprocessable_entity#422
     end
   end
 
@@ -63,8 +64,10 @@ class Api::V1::BandsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_current_users_band
-      @band = current_user.bands.find(params[:id])
-      # 見つからなかったらエラー吐くようにする
+      @band = current_user.bands.find_by(id: params[:id])
+      unless @band
+        render plain: "Band(id: #{params[:id]}) is not found", status: :not_found#404
+      end
     end
 
     # Only allow a trusted parameter "white list" through.
@@ -74,7 +77,7 @@ class Api::V1::BandsController < ApplicationController
 
     # user_idsに無効なidが含まれないかをチェック
     def validate_user_ids
-      if band_params[:user_ids].all? {|id| !User.find_by(id: id) }
+      if band_params[:user_ids] && band_params[:user_ids].any? {|id| !User.find_by(id: id) }
         render plain: "'user_ids' is invalid", status: :unprocessable_entity#422
       end
     end
