@@ -2,6 +2,7 @@
 class Api::V1::BandsController < ApplicationController
   # current_userが所属するバンドのコントロール
   before_action :set_current_users_band, only: [:show, :update, :leave]
+  before_action :validate_user_ids, only: [:update]
 
   # GET /bands
   def index
@@ -25,19 +26,12 @@ class Api::V1::BandsController < ApplicationController
 
 
   # PATCH/PUT /bands/1
+  # アプリの仕様上、user_idsは変更前のものは消せない仕組み。 例) [1,2,3]->[2,3,4]としたら、勝手に[1,2,3,4](新旧の和集合)で登録する。(2行目)
   def update
-    #user_idsのバリデーション(あとでmodel層に引越し)-------------------------------------
-    #excは、(nil: user_idsが送られなかった時)([]: user_idsが正常な値の時)([1,3]: user_idsが不正な値の時)
-    exc = band_params[:user_ids]&.reject do |user_id|
-      User.find_by(id: user_id)
-    end
-    if exc && !exc.empty?
-      render plain: "user_ids: #{exc} is invalid", status: :unprocessable_entity
-      return
-    end
-    #----------------------------------------------------------
-
-    if @band.update(band_params)
+    old_ids = @band.user_ids
+    bp = band_params.to_h
+    bp[:user_ids] |= old_ids
+    if @band.update(bp)
       render json: @band, serializer: BandSerializer
     else
       render json: @band.errors, status: :unprocessable_entity
@@ -78,4 +72,10 @@ class Api::V1::BandsController < ApplicationController
       params.permit(:name, {user_ids: []})
     end
 
+    # user_idsに無効なidが含まれないかをチェック
+    def validate_user_ids
+      if band_params[:user_ids].all? {|id| !User.find_by(id: id) }
+        render plain: "'user_ids' is invalid", status: :unprocessable_entity#422
+      end
+    end
 end
