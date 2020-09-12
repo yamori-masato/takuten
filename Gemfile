@@ -51,3 +51,6 @@ gem 'active_model_serializers'
 
 gem 'rspec-rails'
 gem 'factory_bot_rails'
+
+# Permit cors
+gem 'rack-cors'
