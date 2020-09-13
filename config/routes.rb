@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
 
   root to: 'users#index'
-  post 'login/login'
+  post 'login/', to: 'login#login'
 
-  
+
   namespace :api do
     namespace :v1 do
 
