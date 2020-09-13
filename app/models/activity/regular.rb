@@ -54,9 +54,9 @@ class Activity::Regular < Recurring
                 t = Timetable
                 occurs_between(date_start,last).each do |occurrence|#日付
                     os = t.new.one_day_occurrences(occurrence)
-                    if os.find_all{|o| o[:time_start] == time_start_f}.length >= 3 #新たに追加したらコマ3被り
+                    if os.find_all{|o| included_in_section? }.length >= 3 #新たに追加したらコマ3被り
                         self.exception_times.build(date: occurrence).save! #除外の追加
-                    elsif os.find_all{|o| o[:time_start] == time_start_f && o[:band_id] == band_id}.length >= 2 #新たに追加したら自身のバンドの非正規コマと被り
+                    elsif os.find_all{|o| included_in_section? && o[:band_id] == band_id}.length >= 2 #新たに追加したら自身のバンドの非正規コマと被り
                         self.exception_times.build(date: occurrence).save! #除外の追加
                     end
                 end

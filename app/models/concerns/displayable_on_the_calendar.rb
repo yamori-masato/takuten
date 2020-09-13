@@ -9,17 +9,23 @@ module DisplayableOnTheCalendar
         def between(st,ed)
             raise NotImplementedError
         end
+    end
 
-        # SECTIONで、指定されたidに対応するものをtime型に変換して返す
-        def table(section_id)
-            sec = SECTION[section_id]
-            sec.map{|s| Time.zone.parse(s)}
-        end
+    # SECTIONで、指定されたidに対応するものをtime型に変換して返す
+    def table(section_id)
+        sec = SECTION[section_id]
+        sec.map{|s| Time.zone.parse(s)}
+    end
 
-        def section_id(time_start, time_end)
-            st, ed = time_start.strftime("%H:%M:%S"), time_end.strftime("%H:%M:%S")
-            SECTION.index([st,ed])
-        end   
+    # SECTIONに対応するidを返す
+    def section_id
+        st, ed = time_start.strftime("%H:%M:%S"), time_end.strftime("%H:%M:%S")
+        SECTION.index([st,ed])
+    end   
+
+    # SECTIONで、指定されたidに対応するものをtime型に変換して返す
+    def included_in_section?
+        !!section_id
     end
 
 

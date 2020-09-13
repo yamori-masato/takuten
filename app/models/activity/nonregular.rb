@@ -30,7 +30,7 @@ class Activity::Nonregular < Onetime
         def validate_triple_booking
             t = Timetable.new
             os = t.one_day_occurrences(date)#その日の全ての予定(hash配列)
-            if os.find_all{|o| o[:time_start] == time_start_f}.length >= 2
+            if os.find_all{|o| included_in_section? }.length >= 2
                 errors.add(:base,'そのコマは既に他の予約で埋まっています。')
             end
         end
@@ -38,7 +38,7 @@ class Activity::Nonregular < Onetime
         def validate_cannot_book_at_the_same_time
             t = Timetable.new
             os = t.one_day_occurrences(date)#その日の全ての予定(hash配列)
-            if !os.find_all{|o| o[:time_start] == time_start_f && o[:band_id] == band_id}.empty?
+            if !os.find_all{|o| included_in_section? && o[:band_id] == band_id}.empty?
                 errors.add(:base,"同じコマは2つ以上予約できません。")
             end
         end
