@@ -1,7 +1,7 @@
 module DisplayableOnTheCalendar
     extend ActiveSupport::Concern
 
-
+    # 1レコード1日程を表していない子モデルもあるから、インスタンスメソッドでなく、関数を提供するイメージ　＝＞モジュール関数
     
 
     module ClassMethods
@@ -9,6 +9,11 @@ module DisplayableOnTheCalendar
         def between(st,ed)
             raise NotImplementedError
         end
+    end
+
+    # Calendarクラスを取得するインターフェース
+    def calendar
+        Calendar.new
     end
 
     # SECTIONで、指定されたidに対応するものをtime型に変換して返す

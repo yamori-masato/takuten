@@ -1,4 +1,4 @@
-class Timetable
+class Calendar
     include ActiveModel::Model
 
     def initialize
