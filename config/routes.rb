@@ -21,7 +21,7 @@ Rails.application.routes.draw do
       resources :users, only: [:index]
       resources :bands do
         member do
-          patch :leave# 自身のバンドから退会
+          delete :leave# 自身のバンドから退会
         end
 
         #単発削除

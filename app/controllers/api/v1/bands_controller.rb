@@ -16,7 +16,7 @@ class Api::V1::BandsController < ApplicationController
   end
 
 
-  # PATCH /bands/:id/leave
+  # DELETE /bands/:id/leave
   # 指定したバンドから、自身が抜ける(ログインユーザ)
   def leave
     current_user.bands.destroy(@band)
@@ -53,13 +53,6 @@ class Api::V1::BandsController < ApplicationController
     end
   end
 
-
-
-
-  # # DELETE /bands/1
-  # def destroy
-  #   @band.destroy
-  # end
 
   private
     # Use callbacks to share common setup or constraints between actions.
