@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_08_173606) do
+ActiveRecord::Schema.define(version: 2020_09_16_025851) do
 
   create_table "bands", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "has_regular", default: false, null: false
     t.index ["name"], name: "index_bands_on_name", unique: true
   end
 
