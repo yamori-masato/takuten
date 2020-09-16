@@ -11,15 +11,15 @@ class Api::V1::CalendarController < ApplicationController
   #月単位
   def month
       date = Date.new(params[:year].to_i, params[:month].to_i, 1)#月初
-      @calendars = Calendar.new.one_month_occurrences(date)
-      render json: @calendars
+      @calendar = Calendar.new.one_month_occurrences(date)
+      render json: @calendar
   end
 
   #日にち単位
   def date
       date = Date.new(params[:year].to_i, params[:month].to_i, params[:date].to_i)
-      @calendars = Calendar.new.one_day_occurrences(date)
-      render json: @calendars
+      @calendar = Calendar.new.one_day_occurrences(date)
+      render json: @calendar
   end
 
 

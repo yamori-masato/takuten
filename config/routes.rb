@@ -29,10 +29,10 @@ Rails.application.routes.draw do
         resource :nonregular, only: [:destroy]
       end
       
-      #カレンダーと正規コマカレンダー
+      #カレンダーと正規コマカレンダー(リソースベースではないもの)
       get 'calendar/:year/:month', to: 'calendar#month'
       get 'calendar/:year/:month/:date', to: 'calendar#date'
-      resources :regulars, only: [:index]
+      get 'rcalendar/:year/:month/:date', to: 'regular_calendar#date'
 
 
     end
