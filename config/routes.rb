@@ -30,8 +30,8 @@ Rails.application.routes.draw do
       end
       
       #カレンダーと正規コマカレンダー
-      get 'calendar/:year/:month', to: 'calendars#month'
-      get 'calendar/:year/:month/:date', to: 'calendars#date'
+      get 'calendar/:year/:month', to: 'calendar#month'
+      get 'calendar/:year/:month/:date', to: 'calendar#date'
       resources :regulars, only: [:index]
 
 
