@@ -1,4 +1,4 @@
-class Api::V1::RegularCalendarController < ApplicationController
+class Api::V1::Calendar::RegularCalendarController < ApplicationController
 
   # その日を含む週(日~月)のregularを返す
   def date

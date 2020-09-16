@@ -1,4 +1,4 @@
-class Api::V1::CalendarController < ApplicationController
+class Api::V1::Calendar::CalendarController < ApplicationController
   # {date: time_st: time_ed: }のような、静的なカラムを持てない(recurringは期間から返還されるから)
   # だからポリモーフィック関連がつかえない？
   # 使うとカレンダーインターフェースからの処理が簡潔。でも、displayablesテーブルにはidがテーブルが保存されるだけで冗長な気もする
@@ -10,7 +10,7 @@ class Api::V1::CalendarController < ApplicationController
   
   #月単位
   def month
-      date = Date.new(params[:year].to_i, params[:month].to_i, 1)#月初
+      date = Date.new(params[:year].to_i, params[:month].to_i, 1)#月初め
       @calendar = Calendar.new.one_month_occurrences(date)
       render json: @calendar
   end

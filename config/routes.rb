@@ -16,6 +16,9 @@ Rails.application.routes.draw do
         resources :regulars, only: [:index, :show, :create, :update, :destroy]
       end
 
+
+
+
       # 一般利用者は、token有りのリクエストを送る事で自身や自身のバンドをみれる。
       resource :user, only: [:update, :show]
       resources :users, only: [:index]
@@ -30,10 +33,11 @@ Rails.application.routes.draw do
       end
       
       #カレンダーと正規コマカレンダー(リソースベースではないもの)
-      get 'calendar/:year/:month', to: 'calendar#month'
-      get 'calendar/:year/:month/:date', to: 'calendar#date'
-      get 'rcalendar/:year/:month/:date', to: 'regular_calendar#date'
-
+      scope module: :calendar do
+        get 'calendar/:year/:month', to: 'calendar#month'
+        get 'calendar/:year/:month/:date', to: 'calendar#date'
+        get 'rcalendar/:year/:month/:date', to: 'regular_calendar#date'
+      end
 
     end
   end
