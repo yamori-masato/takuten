@@ -3,7 +3,6 @@ module Api
     module Admin
       class UsersController < ApplicationController
         before_action :set_user, only: [:show, :update, :destroy]
-        # wrap_parameters :user
 
         # GET /users
         def index

@@ -1,4 +1,3 @@
-
 class Api::V1::BandsController < ApplicationController
   # current_userが所属するバンドのコントロール
   before_action :set_current_users_band, only: [:show, :update, :leave]

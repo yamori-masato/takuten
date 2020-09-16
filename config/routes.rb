@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  root to: 'users#index'
+
   post 'login/', to: 'login#login'
 
 
@@ -8,31 +8,29 @@ Rails.application.routes.draw do
     namespace :v1 do
 
 
-      # 管理者はuserまで触れる api/v1の外のがよさそう
+      # AdminUser-----------------------------------------------------
       namespace :admin do
-        resources :users do 
-          resources :bands #admin側でネストする意味なさそう
+        resources :users
+        resources :bands do
+          resources :nonregulars
+          resources :regulars
         end
-        resources :regulars, only: [:index, :show, :create, :update, :destroy]
       end
 
 
 
 
-      # 一般利用者は、token有りのリクエストを送る事で自身や自身のバンドをみれる。
+      # User-----------------------------------------------------
       resource :user, only: [:update, :show]
       resources :users, only: [:index]
       resources :bands do
-        member do
-          delete :leave# 自身のバンドから退会
-        end
+        delete :leave, on: :member# 自身のバンドから退会
 
         #単発削除
         resource :regular, only: [:destroy]
-        resource :nonregular, only: [:destroy]
+        resource :nonregular, only: [:create,:destroy]
       end
       
-      #カレンダーと正規コマカレンダー(リソースベースではないもの)
       scope module: :calendar do
         get 'calendar/:year/:month', to: 'calendar#month'
         get 'calendar/:year/:month/:date', to: 'calendar#date'
