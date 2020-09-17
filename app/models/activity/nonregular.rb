@@ -20,6 +20,18 @@ class Activity::Nonregular < Onetime
         end
     end
 
+    def date_start
+        date
+    end
+
+    def time_start
+        attributes["time_start"]
+    end
+
+    def time_end
+        attributes["time_end"]
+    end
+
 
     MS = Time.current.beginning_of_month.to_date
     MM = MS.since(14.days)

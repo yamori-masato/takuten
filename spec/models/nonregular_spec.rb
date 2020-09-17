@@ -3,15 +3,20 @@ require 'rails_helper'
 RSpec.describe Activity::Nonregular, type: :model do
   let(:date_start) { Date.parse("2000/1/#{st}") }
   let(:date_end) { Date.parse("2000/1/#{ed}") }
+  let(:sec) { [["09:00:00", "11:00:00"], ["11:00:00", "13:00:00"]].map{|s| s.map{|t| Time.parse(t)}} }
+  before do
+    Timetable.create(date_start:Date.parse("1000/1/1"), sections:sec)
+  end
 
   describe "バリデーション" do
     describe "band_id" do
       context '未入力の時' do
         it '登録できない' do
-            expect(build(:nonregular, band_id: nil)).not_to be_valid
+          expect(build(:nonregular, band_id: nil)).not_to be_valid
         end
       end
     end
+    
     describe 'validate_triple_booking' do
       context 'コマが既に2件予約されている時' do
         before do
@@ -44,7 +49,20 @@ RSpec.describe Activity::Nonregular, type: :model do
         it '登録できない' do
           expect(build(:nonregular, band_id: @band.id)).not_to be_valid
         end
+      end
     end
+
+    describe "display_on_the_calendar" do
+      describe "validate_time_should_fit_the_section" do
+        context 'time_start,time_endが区分と一致しないとき' do
+          before do
+            
+          end
+          it '登録できない' do
+            expect(build(:nonregular, time_start: Time.parse("01:00:00"))).not_to be_valid
+          end
+        end
+      end
     end
   end
   

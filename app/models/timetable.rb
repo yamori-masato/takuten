@@ -6,7 +6,8 @@ class Timetable < ApplicationRecord
 
     scope :before, -> (date){ where(Timetable.arel_table[:date_start].lt(date)) } # :date < date_start
     scope :after, -> (date){ where(Timetable.arel_table[:date_start].gteq(date)) } # :date >= date_start
-    scope :current, -> (date){ where(date_start: before(date).maximum(:date_start)) }
+    scope :current, -> (date){ where(date_start: before(date).maximum(:date_start)).first }
+
 
     # strftimeされたsections
     def sections_f
@@ -25,17 +26,13 @@ class Timetable < ApplicationRecord
         section(section_id).map{ |time| time.strftime("%H:%M:%S") }
     end
 
-    # SECTIONに対応するidを返す
+    # SECTIONに対応するindexを返す
     def section_index(ts,te)
         sec = [ts,te]
         sec.map!{ |t| t.strftime("%H:%M:%S") }
-         
+        sections_f.index(sec)
     end   
 
-    # SECTIONで、指定されたidに対応するものをtime型に変換して返す
-    def included_in_section?
-        !!section_id
-    end
 
     SECTION_F = [
         ["09:00:00", "11:00:00"],
@@ -46,8 +43,7 @@ class Timetable < ApplicationRecord
         ["18:30:00", "20:00:00"],
     ]
 
-    SEC = Timetable::SECTION_F.map{|s| s.map{|t| Time.parse(t)}}
-
+    SECTION = Timetable::SECTION_F.map{|s| s.map{|t| Time.parse(t)}}
 
 
 

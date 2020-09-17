@@ -21,7 +21,7 @@ class Recurring < ApplicationRecord
       #     end
       # end
       def validate_between_time_start_to_time_end
-          if errors.full_messages.empty? && time_start >= time_end
+          if errors.full_messages.empty? && time_start_f >= time_end_f
           errors.add(:base,'time_endはtime_startより後に設定してください')
           end
       end

@@ -38,6 +38,17 @@ class Activity::Regular < Recurring
         end.flatten
     end
 
+    def date_start
+        attributes["date_start"]
+    end
+
+    def time_start
+        attributes["time_start"]
+    end
+
+    def time_end
+        attributes["time_end"]
+    end
 
 
 
