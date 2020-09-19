@@ -31,8 +31,13 @@ class Timetable < ApplicationRecord
         sec = [ts,te]
         sec.map!{ |t| t.strftime("%H:%M:%S") }
         sections_f.index(sec)
-    end   
+    end
 
+    def delete_all_subsequent_schedules(date)
+        Calendar.new.polymorphic.each do |p|
+            p.delete_all_subsequent_schedules(date)
+        end
+    end
 
     SECTION_F = [
         ["09:00:00", "11:00:00"],

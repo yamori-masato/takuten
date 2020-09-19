@@ -3,6 +3,7 @@ class Activity::Nonregular < Onetime
     validate :validate_triple_booking
     validate :validate_cannot_book_at_the_same_time
 
+
     include DisplayableOnTheCalendar
     # start~endまでに存在する非正規コマのイベントをhashで返す
     def self.between(st,ed,band_id:nil)
@@ -18,6 +19,14 @@ class Activity::Nonregular < Onetime
                 band_id: nonregular.band_id,
             }
         end
+    end
+
+    def self.shift_time_of_all_subsequent_schedules(st,ed=nil,old_sections)
+
+    end
+
+    def self.delete_all_subsequent_schedules(date)
+        self.after(date).destroy_all
     end
 
     def date_start

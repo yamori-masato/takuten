@@ -38,6 +38,28 @@ class Activity::Regular < Recurring
         end.flatten
     end
 
+        
+    # ①dateを跨ぐものはそこで打ち切って(date_endを設定)、date_start=dateとしてあらたに作成(続きを別時間で作成)
+    # ②跨がないものはレコード自体を削除して新たに別時間に設定し作成
+    def self.shift_time_of_all_subsequent_schedules(st,ed=nil,old_sections)
+    end
+
+    # ①dateを跨ぐものはそこで打ち切る
+    # ②跨がないものはレコード自体を削除
+    def self.delete_all_subsequent_schedules(date)
+        self.transaction do
+            records = where(date_end: nil).where(Activity::Regular.arel_table[:date_end].getq(date))
+            records.each! do |record|
+                if record.date_start < date #①
+                    record.date_end = date - 1.days
+                    record.save!
+                else #②
+                    record.destroy!
+                end
+            end
+        end
+    end
+
     def date_start
         attributes["date_start"]
     end

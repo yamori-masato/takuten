@@ -1,9 +1,13 @@
 module DisplayableOnTheCalendar
     extend ActiveSupport::Concern
-    # 1レコード1日程を表していない子モデルもあるから、インスタンスメソッドでなく、関数を提供するイメージ　＝＞モジュール関数
+    # 1レコード1日程を表していない子モデルもあるから、インスタンスメソッドでなく、関数を提供するイメージ
     
     included do
         validate :validate_time_should_fit_the_section
+
+        scope :before, -> (date){ where(Activity::Nonregular.arel_table[:date_start].gtlt(date)) } # :date <= date_start
+        scope :after, -> (date){ where(Activity::Nonregular.arel_table[:date_start].gteq(date)) } # :date >= date_start
+        scope :range, -> (st,ed){ Activity::Nonregular.after(st).before(ed) }
     end
 
     module ClassMethods
@@ -13,7 +17,7 @@ module DisplayableOnTheCalendar
         end
 
         # st..ed間の予定をsectionsに沿って移動させる。ed=nilの時は移行の予定全てが対象
-        def time_shift(st,ed=nil,sections)
+        def shift_time_of_all_subsequent_schedules(st,ed=nil,old_sections)
             raise NotImplementedError
         end
 
@@ -23,6 +27,7 @@ module DisplayableOnTheCalendar
         end
     end
 
+    # 必須プロパティ
     def time_start
         raise NotImplementedError
     end
@@ -35,23 +40,31 @@ module DisplayableOnTheCalendar
         raise NotImplementedError
     end
 
-
+    # dateに対応するTimetableインスタンスを返す
+    def timetable(date)
+        Timetable.current(date)
+    end
 
     # Calendarクラスを取得するインターフェース
     def calendar
         Calendar.new
     end
 
-    # dateに対応するTimetableインスタンスを返す
-    def timetable(date)
-        Timetable.current(date)
-    end
 
     private
+
         # Timetableの区分に一致を強制
         def validate_time_should_fit_the_section
             unless timetable(date_start).section_index(time_start, time_end)
                 errors.add(:base, "time_start and time_end must fit timetable's section")
             end
         end
+
+
+
+        # カレンダーのバリデーションを各子モデルに切り出しているのが汚い。せめて、DisplayOnTheCalendarの為のバリデーションってわかるようにラップできたら。(制約が後から追加された感覚だからモジュール内に閉じ込めたい)
+        # Timetableのように、全子モデル共通のバリデーションなら、モジュール内に記述してincludeさせればいいけど、
+        # 子モデルごとでバリデーションの挙動が違う且つ、バリデーション自体が任意であるとき困る(Calendar)
 end
+
+
