@@ -66,6 +66,39 @@ RSpec.describe Activity::Nonregular, type: :model do
     end
   end
   
+  describe '#delete_all_subsequent_schedules' do
+    describe "引数以降の予定をすべて削除" do
+      before do
+        @band0 = create(:band)
+        @dummy = create(:nonregular, date: Date.parse('1999-12-01'), band_id: @band0.id) # ds<date -> 変更なし
+        create(:nonregular, date: Date.parse('2000-01-01'), band_id: create(:band).id)          # ds=date -> 削除
+        create(:nonregular, date: Date.parse('2000-01-31'), band_id: create(:band).id)          # date<ds -> 削除
+      end 
+      context "引数が2000-01-01の時" do
+        let(:date) { Date.parse('2000-01-01') }
+        before do
+          Activity::Nonregular.delete_all_subsequent_schedules(date)
+        end
+        
+        context "date_start<(引数) のとき" do
+          it "変化なし" do
+            regular0 = Activity::Nonregular.find_by(band_id: @band0.id)
+            expect(regular0).to eq @dummy
+          end
+        end
+        context "(引数)<=date_start のとき" do
+          describe "レコードを削除する" do
+            describe "よって、メソッド実行前後の総レコード数は3->1" do
+              subject { Activity::Nonregular.all.length }
+              it {is_expected.to eq 1}
+            end
+          end
+        end
+
+      end
+    end
+  end
+
 
   describe 'Activity::Nonregular.between' do
     let(:between) { Activity::Nonregular.between(date_start, date_end, band_id:band_id) }

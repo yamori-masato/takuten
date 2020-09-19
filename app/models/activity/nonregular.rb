@@ -3,6 +3,8 @@ class Activity::Nonregular < Onetime
     validate :validate_triple_booking
     validate :validate_cannot_book_at_the_same_time
 
+    scope :ds_lteq, -> (date){ where(self.arel_table[:date].lteq(date)) } # date >= :date
+    scope :ds_gteq, -> (date){ where(self.arel_table[:date].gteq(date)) } # date <= :date
 
     include DisplayableOnTheCalendar
     # start~endまでに存在する非正規コマのイベントをhashで返す
@@ -22,12 +24,12 @@ class Activity::Nonregular < Onetime
     end
 
     def self.shift_time_of_all_subsequent_schedules(st,ed=nil,old_sections)
-
     end
 
     def self.delete_all_subsequent_schedules(date)
-        self.after(date).destroy_all
+        self.ds_gteq(date).destroy_all
     end
+    
 
     def date_start
         date

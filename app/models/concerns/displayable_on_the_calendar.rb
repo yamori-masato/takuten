@@ -4,11 +4,6 @@ module DisplayableOnTheCalendar
     
     included do
         validate :validate_time_should_fit_the_section
-
-        scope :ds_lteq, -> (date){ where(self.arel_table[:date_start].lteq(date)) } # date >= :date_start
-        scope :ds_gteq, -> (date){ where(self.arel_table[:date_start].gteq(date)) } # date <= :date_start
-        scope :de_lteq, -> (date){ where(self.arel_table[:date_end].lteq(date)) } # date >= :date_end
-        scope :de_gteq, -> (date){ where(self.arel_table[:date_end].gteq(date)) } # date <= :date_end
     end
 
     module ClassMethods

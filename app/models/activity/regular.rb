@@ -2,6 +2,10 @@ class Activity::Regular < Recurring
     include ActivityMixin
     after_create :create_exception_if_already_booked
     
+    scope :ds_lteq, -> (date){ where(self.arel_table[:date_start].lteq(date)) } # date >= :date_start
+    scope :ds_gteq, -> (date){ where(self.arel_table[:date_start].gteq(date)) } # date <= :date_start
+    scope :de_lteq, -> (date){ where(self.arel_table[:date_end].lteq(date)) } # date >= :date_end
+    scope :de_gteq, -> (date){ where(self.arel_table[:date_end].gteq(date)) } # date <= :date_end
 
     #指定期間中の該当する日付のリストを返す。例 ["2020-09-02", "2020-09-09", ...]
     def occurs_between(st,ed)
@@ -40,12 +44,12 @@ class Activity::Regular < Recurring
 
         
     # ①dateを跨ぐものはそこで打ち切って(date_endを設定)、date_start=dateとしてあらたに作成(続きを別時間で作成)
-    # ②跨がないものはレコード自体を削除して新たに別時間に設定し作成
+    # ②跨がない。且つdateより先のものはレコード自体を削除して新たに別時間に設定し作成
     def self.shift_time_of_all_subsequent_schedules(st,ed=nil,old_sections)
     end
 
     # ①dateを跨ぐものはそこで打ち切る
-    # ②跨がない。且つdateより先のも予定はレコード自体を削除
+    # ②跨がない。且つdateより先のものは予定はレコード自体を削除
     def self.delete_all_subsequent_schedules(date)
         pattern1 = self.de_gteq(date).or(self.where(date_end: nil)).ds_lteq(date) # ①
         pattern2 = self.ds_gteq(date)                                             # ②
@@ -53,7 +57,6 @@ class Activity::Regular < Recurring
             pattern1.each { |record| record.update!(date_end: date-1.days) } 
             pattern2.each { |record| record.destroy! } 
         end
-
     end
 
     def date_start
