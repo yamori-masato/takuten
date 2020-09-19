@@ -45,19 +45,15 @@ class Activity::Regular < Recurring
     end
 
     # ①dateを跨ぐものはそこで打ち切る
-    # ②跨がないものはレコード自体を削除
+    # ②跨がない。且つdateより先のも予定はレコード自体を削除
     def self.delete_all_subsequent_schedules(date)
+        pattern1 = self.de_gteq(date).or(self.where(date_end: nil)).ds_lteq(date) # ①
+        pattern2 = self.ds_gteq(date)                                             # ②
         self.transaction do
-            records = where(date_end: nil).where(Activity::Regular.arel_table[:date_end].getq(date))
-            records.each! do |record|
-                if record.date_start < date #①
-                    record.date_end = date - 1.days
-                    record.save!
-                else #②
-                    record.destroy!
-                end
-            end
+            pattern1.each { |record| record.update!(date_end: date-1.days) } 
+            pattern2.each { |record| record.destroy! } 
         end
+
     end
 
     def date_start

@@ -76,6 +76,57 @@ RSpec.describe Activity::Regular, type: :model do
     end
   end
 
+  describe '#delete_all_subsequent_schedules' do
+    describe "引数以降の予定をすべて削除" do
+      before do
+        @band0 = create(:band)
+        @dummy = create(:regular, date_start: Date.parse('1999-12-01'), date_end: Date.parse('1999-12-31'), band_id: @band0.id) # ds<=de<date -> 変更なし
+        @band1 = create(:band)
+        create(:regular, date_start: Date.parse('1999-12-01'), band_id: @band1.id)                                              # ds<date -> date_end設定
+        @band2 = create(:band)
+        create(:regular, date_start: Date.parse('1999-12-15'), date_end: Date.parse('2000-01-01'), band_id: @band2.id)          # ds<date=de -> date_end設定
+        @band3 = create(:band)
+        create(:regular, date_start: Date.parse('1999-12-15'), date_end: Date.parse('2000-01-31'), band_id: @band3.id)          # ds<date<de -> date_end設定
+        @band4 = create(:band)
+        create(:regular, date_start: Date.parse('2000-01-01'), band_id: @band4.id)                                              # ds=date -> 削除
+        @band5 = create(:band)
+        create(:regular, date_start: Date.parse('2000-01-31'), date_end: Date.parse('2000-01-31'), band_id: @band5.id)          # date<ds<de -> 削除
+      end 
+      context "引数が2000-01-01の時" do
+        let(:date) { Date.parse('2000-01-01') }
+        before do
+          Activity::Regular.delete_all_subsequent_schedules(date)
+        end
+        
+        context "date_start<=date_end<(引数) のとき" do
+          it "変化なし" do
+            regular0 = Activity::Regular.find_by(band_id: @band0.id)
+            expect(regular0).to eq @dummy
+          end
+        end
+        context "date_start<(引数)<=date_end のとき" do
+          it "date_endをdate-1日に設定する" do
+            regular1 = Activity::Regular.find_by(band_id: @band1.id)
+            expect(regular1.date_end).to eq date-1.day
+            regular2 = Activity::Regular.find_by(band_id: @band2.id)
+            expect(regular2.date_end).to eq date-1.day
+            regular3 = Activity::Regular.find_by(band_id: @band3.id)
+            expect(regular3.date_end).to eq date-1.day
+          end
+        end     
+        context "(引数)<=date_start<=date_end のとき" do
+          describe "レコードを削除する" do
+            describe "よって、メソッド実行前後の総レコード数は6->4" do
+              subject { Activity::Regular.all.length }
+              it {is_expected.to eq 4}
+            end
+          end
+        end
+
+      end
+    end
+  end
+
   describe 'Activity::Regular.between' do
     let(:between) { Activity::Regular.between(date_start, date_end, band_id:band_id) }
     subject { between.length }

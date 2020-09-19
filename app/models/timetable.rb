@@ -4,8 +4,8 @@ class Timetable < ApplicationRecord
     validate :validate_section_format
     before_create :update_current_timetable
 
-    scope :before, -> (date){ where(Timetable.arel_table[:date_start].lt(date)) } # :date < date_start
-    scope :after, -> (date){ where(Timetable.arel_table[:date_start].gteq(date)) } # :date >= date_start
+    scope :before, -> (date){ where(Timetable.arel_table[:date_start].lt(date)) } # date > :date_start
+    scope :after, -> (date){ where(Timetable.arel_table[:date_start].gteq(date)) } # date <= :date_start
     scope :current, -> (date){ where(date_start: before(date).maximum(:date_start)).first }
 
 
