@@ -12,7 +12,7 @@ class Api::V1::Calendar::CalendarController < ApplicationController
   def month
       date = Date.new(params[:year].to_i, params[:month].to_i, 1)#月初め
       @calendar = ::Calendar.new.one_month_occurrences(date)
-      render json: @calendar
+      render json: @calendar, status: :ok
   end
 
   #日にち単位

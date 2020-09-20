@@ -1,4 +1,5 @@
 class Api::V1::NonregularsController < ApplicationController
+  before_action :authenticate
   before_action :set_current_users_band, only: [:index, :destroy, :create]
   before_action :set_bands_nonregular, only: [:destroy]
 

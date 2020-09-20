@@ -1,7 +1,6 @@
 
 class Api::V1::UsersController < ApplicationController
   # include ActionController::HttpAuthentication::Token::ControllerMethods
-  before_action :authenticate
   before_action :set_current_user, only: [:show, :update]
   
 

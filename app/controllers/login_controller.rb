@@ -1,4 +1,6 @@
 class LoginController < ApplicationController
+  skip_before_action :authenticate
+  
   def login
     logger.debug("--------------------------")
     logger.debug(params)
