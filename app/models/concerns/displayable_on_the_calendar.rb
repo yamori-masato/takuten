@@ -1,6 +1,7 @@
 module DisplayableOnTheCalendar
     extend ActiveSupport::Concern
     # 1レコード1日程を表していない子モデルもあるから、インスタンスメソッドでなく、関数を提供するイメージ
+    # betweenは、ハッシュじゃなくてオブジェクトを返すように定義させたほうが良さそう。srializerつかったりできる。
     
     included do
         validate :validate_time_should_fit_the_section

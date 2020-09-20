@@ -1,7 +1,7 @@
 class Activity::Regular < Recurring
     include ActivityMixin
     after_create :create_exception_if_already_booked
-    
+
     scope :ds_lteq, -> (date){ where(self.arel_table[:date_start].lteq(date)) } # date >= :date_start
     scope :ds_gteq, -> (date){ where(self.arel_table[:date_start].gteq(date)) } # date <= :date_start
     scope :de_lteq, -> (date){ where(self.arel_table[:date_end].lteq(date)) } # date >= :date_end
@@ -15,6 +15,10 @@ class Activity::Regular < Recurring
             schedule.add_exception_time(et.date)
         end
         schedule.occurrences_between(st,ed).map{|o| o.to_date.to_s}
+    end
+
+    def occurs_on?(date)
+        occurs_between(date,date).present?
     end
     
     #曜日を返す(日~土: 0~6)

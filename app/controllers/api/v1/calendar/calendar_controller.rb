@@ -1,5 +1,5 @@
 class Api::V1::Calendar::CalendarController < ApplicationController
-  # {date: time_st: time_ed: }のような、静的なカラムを持てない(recurringは期間から返還されるから)
+  # {date: time_st: time_ed: }のような、静的なカラムを持てない(recurringは期間から変換されるから)
   # だからポリモーフィック関連がつかえない？
   # 使うとカレンダーインターフェースからの処理が簡潔。でも、displayablesテーブルにはidがテーブルが保存されるだけで冗長な気もする
   # 関連使うとインスタンスごとの操作になるからrecurringテーブルとの相性が悪い。検索(期間指定)のロジックが子クラスごとでかなり違うからそれぞれのクラスにまかせたい(インスタンス単位だと厳しい)。
