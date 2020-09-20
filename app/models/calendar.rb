@@ -16,7 +16,7 @@ class Calendar
     #st(date)から1ヶ月間の全ての予定(hash配列)を返す
     def one_month_occurrences(st,band_id:nil)
         st = st.to_date # Date#to_dateを定義されているから保険用
-        ed = st.next_month
+        ed = st.next_month - 1.days
         occurs_between(st,ed,band_id:band_id)
     end
 
