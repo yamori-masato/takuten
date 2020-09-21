@@ -2,7 +2,8 @@ class Activity::Nonregular < Onetime
     include ActivityMixin
     validate :validate_triple_booking
     validate :validate_cannot_book_at_the_same_time
-    before_validation :string_to_date, :string_to_time
+    attr_accessor :index
+    before_validation :string_to_date, :string_to_time, :section_index
 
     scope :ds_lteq, -> (date){ where(self.arel_table[:date].lteq(date)) } # date >= :date
     scope :ds_gteq, -> (date){ where(self.arel_table[:date].gteq(date)) } # date <= :date
@@ -71,6 +72,11 @@ class Activity::Nonregular < Onetime
         def string_to_time
             self.time_start = Time.parse(self.time_start) if self.time_start.class == String
             self.time_end = Time.parse(self.time_end) if self.time_end.class == String
+        end
+        def section_index
+            if self.index.presence
+                self.time_start, self.time_end = timetable(self.date_start).section(self.index)
+            end
         end
 
 

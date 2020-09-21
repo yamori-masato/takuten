@@ -42,6 +42,6 @@ class Api::V1::NonregularsController < ApplicationController
     end
 
     def nonregular_params
-      params.permit(:date, :time_start, :time_end)
+      params.permit(:date, :time_start, :time_end, :index)
     end
 end
