@@ -18,8 +18,9 @@ class Api::V1::Calendar::CalendarController < ApplicationController
   #日にち単位
   def date
       date = Date.new(params[:year].to_i, params[:month].to_i, params[:date].to_i)
-      @calendar = Calendar.new.one_day_occurrences(date)
-      render json: @calendar
+      @calendar = ::Calendar.new(current_user: current_user)
+      occurrences = calendar.one_day_occurrences(date)
+      render json: @calendar.renderer(occurrences, date)
   end
 
 
