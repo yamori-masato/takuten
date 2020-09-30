@@ -88,7 +88,7 @@ class Activity::Regular < Recurring
             last = Onetime.maximum(:date)
             if last #1つもデータがない時nilを返す
                 occurs_between(date_start,last).each do |occurrence|#日付
-                    os = calendar.one_day_occurrences(occurrence)
+                    os = one_day_occurrences(occurrence)
                     if os.find_all{|o| o[:time_start] == time_start_f && o[:time_end] == time_end_f}.length >= 3 #新たに追加したらコマ3被り
                         self.exception_times.build(date: occurrence).save! #除外の追加
                     elsif os.find_all{|o| o[:time_start] == time_start_f && o[:time_end] == time_end_f && o[:band_id] == band_id}.length >= 2 #新たに追加したら自身のバンドの非正規コマと被り

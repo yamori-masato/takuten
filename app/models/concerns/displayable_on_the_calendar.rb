@@ -42,9 +42,9 @@ module DisplayableOnTheCalendar
         Timetable.current(date)
     end
 
-    # Calendarクラスを取得するインターフェース
-    def calendar
-        Calendar.new
+
+    def one_day_occurrences(date)
+        Calendar.new(st: date, ed: date).occurrences
     end
 
 

@@ -53,26 +53,27 @@ class Timetable < ApplicationRecord
 
 
     private
+        # ApplicationRecord#serializeによるデメリット(細かくバリデーションしなければならない)
         def validate_section_format
             # n*2の長方行列
             unless sections.length > 0 && sections.all?{ |section| section.length==2 }
-                errors.add(:base, "sections is improper format1")
+                errors.add(:base, "sections is improper format")
                 return
             end
             # 各要素のクラスは[Time, Time]
             sections.each do |time_start, time_end|
                 valid_class = [ActiveSupport::TimeWithZone, Time]
                 unless valid_class.include?(time_start.class) && valid_class.include?(time_start.class)
-                    errors.add(:base, "sections is improper format2")
+                    errors.add(:base, "sections is improper format")
                     return
                 end
                 unless time_start.strftime("%H:%M:%S") < time_end.strftime("%H:%M:%S")
-                    errors.add(:base, "sections is improper format3")
+                    errors.add(:base, "sections is improper format")
                 end
             end
             # sectionがソートされているか、時間が被っていないか
             unless sections.each_cons(2).all? { |a, b| a[1].strftime("%H:%M:%S") <= b[0].strftime("%H:%M:%S")}
-                errors.add(:base, "sections is improper format4")
+                errors.add(:base, "sections is improper format")
             end
         end
 

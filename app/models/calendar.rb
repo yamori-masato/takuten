@@ -1,58 +1,38 @@
 class Calendar
     # include ActiveModel::Model
+    # Timetableでpolymorphicを参照しただけなのに、わざわざCalendar.newしているのが汚い
+    # でもクラス変数とかにすると自動読み込みの影響が出そう(要検証)。インスタンス化がreloadの役目になっているからこっちならまず安心。
 
-    # インスタンスベースにする意味はあるのか？クラス変数(@@)でもよくないか
-    # _occurrencesメソッドはモデルでいうModel.where()にあたるからクラスメソッドであるべき？でもCalendarインスタンス=イベント1つ1つではないからこれも変
-    # そもそもひとつひとつをリストの要素にするより、calendarクラスのインスタンスにしたほうが綺麗？でも表示専門のインターフェースとして見ればやりすぎな気もする
-    # 表示用のインターフェースとして捉えるなら、「Calendarを新たに取得(生成)する」という意味合いではいい気もする。(もしかしたら自動読み込みの関係でreloadが必要になるかも)
 
-    def initialize(current_user: nil, band_id: nil)
+    def initialize(st: Date.today, ed: Date.today, current_user: nil, band_id: nil)
         @polymorphic = [
             Activity::Regular,
             Activity::Nonregular,
         ]
         @timetable = Timetable
-
-        # option
         @current_user = current_user
         @band_id = band_id
-    end
+        @st = st.to_date
+        @ed = ed.to_date
 
-    #st(date)から1ヶ月間の全ての予定(hash配列)を返す
-    def one_month_occurrences(st)
-        st = st.to_date # Date#to_dateを定義されているから保険用
-        ed = st.next_month - 1.days
-        occurs_between(st,ed,band_id:@band_id)
+        @occurrences = occurs_between(@st, @ed, band_id:@band_id)
     end
+    attr_reader :occurrences
 
-    #dateの1日間の全ての予定を返す
-    def one_day_occurrences(date)
-        date = date.to_date
-        occurs_between(date,date,band_id:@band_id)
-    end
 
-    #occurrencesを変換(プレゼント層だから少し違和感)
-    def renderer(os, date)
-        { "date" => date, "sections" => fill(os,date)}
-    end
-
-    def fill(os,date)
-        sections = @timetable.current(date).sections_f
-        sections.map do |section|
-            ts, te = section
-            none = {date: date, time_start: ts, time_end: te, state: "AVAILABLE"}
-            exist = os.count{|os| os[:time_start]==ts && os[:time_end]==te}
-            num = 2 - exist
-            num.times { os.append(none) }
+    #occurrencesを変換(プレゼンテーション層だから少し違和感)
+    def renderer
+        os = @occurrences.group_by{|o| o[:date]} # これだけだとコマが1つもない日が抜ける
+        (@st..@ed).each do |date|
+            date = date.to_s
+            os[date] = [] unless os[date]
         end
 
-        os.each do |o|
-            o.delete(:date)
-            if o[:band_id] && @current_user
-                o[:state] = @current_user.bands.find_by(id: o[:band_id]) ? "YOUS" : "OTHERS"
-            end
-        end.sort_by!{|o| o[:time_start]}
+        oss = os.map{ |date, o| {date: date, sections: fill(o, date)} }
+        oss.length == 1 ? oss : { month: @st.strftime("%Y-%m"), dates: oss}
     end
+
+
 
 
 
@@ -80,6 +60,24 @@ class Calendar
             all_occurrences.sort_by!{|a| a[:date].to_date}
         end
 
+
+        def fill(os,date)
+            sections = @timetable.current(date).sections_f
+            sections.map do |section|
+                ts, te = section
+                none = {date: date, time_start: ts, time_end: te, state: "AVAILABLE"}
+                exist = os.count{|os| os[:time_start]==ts && os[:time_end]==te}
+                num = 2 - exist
+                num.times { os.append(none) }
+            end
+    
+            os.each do |o|
+                o.delete(:date)
+                if o[:band_id] && @current_user
+                    o[:state] = @current_user.bands.find_by(id: o[:band_id]) ? "YOUS" : "OTHERS"
+                end
+            end.sort_by!{|o| o[:time_start]}
+        end
 
 
 end
