@@ -4,6 +4,7 @@ FactoryBot.define do
         sequence(:name){|n| "user#{n}"}
         password {'pass'}
         password_confirmation {'pass'}
+        grade { 1 }
     end
 
 end

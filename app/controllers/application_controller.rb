@@ -9,6 +9,7 @@ class ApplicationController < ActionController::API
     end
 
     def authenticate
+        request.headers.sort.map { |k, v| logger.info "#{k}:#{v}" }
         authenticate_or_request_with_http_token do |token,options|
           auth_user = User.find_by(token: token)
           auth_user != nil ? true : false
