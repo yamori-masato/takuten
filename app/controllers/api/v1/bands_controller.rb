@@ -46,7 +46,8 @@ class Api::V1::BandsController < ApplicationController
     @band.user_ids = @band.user_ids.reject{|i| i == current_user.id} # 既にu1-b1が関連づけられている時に、u1.bands<<b1をするとそれぞれで関連がダブるから先に除外
     if @band.save
       current_user.bands << @band
-      render json: @band, serializer: BandSerializer, status: :created#201
+      band = Band.find(@band.id) # @bandはcurrent_userのidが抜けている。
+      render json: band, serializer: BandSerializer, status: :created#201
     else
       render json: @band.errors, status: :unprocessable_entity#422
     end
