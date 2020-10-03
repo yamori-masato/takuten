@@ -1,7 +1,7 @@
 class Api::V1::BandsController < ApplicationController
   # current_userが所属するバンドのコントロール
   before_action :set_current_users_band, only: [:show, :update, :leave]
-  before_action :validate_user_ids, only: [:update]
+  before_action :validate_user_ids, only: [:update, :create]
 
   # GET /bands
   def index
