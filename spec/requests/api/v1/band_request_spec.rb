@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V1::User", type: :request do
+RSpec.describe "Api::V1::Band", type: :request do
     describe "BandAPI" do
         before do
             # u1 - b1,b2,b3  |  u2  |  u3

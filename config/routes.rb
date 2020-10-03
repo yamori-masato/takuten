@@ -26,10 +26,10 @@ Rails.application.routes.draw do
         delete :leave, on: :member                                          # 自身のバンドから退会
 
 
-        resources :nonregulars, only: [:index, :create, :destroy]           # 非正規コマ
+        resources :nonregulars, only: [:index, :create, :destroy]           # 非正規コマ ~~~~indexはデバック用
         resource :regular do
           post :except, on: :member                                         # 正規コマ単発削除(例外作成) Regular(親)#except = ExceptionTime(子)#create
-          get :next, on: :member
+          # get :next, on: :member
         end 
       end
       

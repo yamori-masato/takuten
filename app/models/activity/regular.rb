@@ -60,6 +60,7 @@ class Activity::Regular < Recurring
         self.transaction do
             pattern1.each { |record| record.update!(date_end: date-1.days) } 
             pattern2.each { |record| record.destroy! } 
+            # ----------------------------------------------------ExceptionTimeも削除
         end
     end
 
