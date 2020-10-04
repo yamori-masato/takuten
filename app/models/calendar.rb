@@ -29,7 +29,7 @@ class Calendar
         end
 
         oss = os.map{ |date, o| {date: date, sections: fill(o, date)} }
-        oss.length == 1 ? oss : { month: @st.strftime("%Y-%m"), dates: oss}
+        oss.length == 1 ? oss[0] : { month: @st.strftime("%Y-%m"), dates: oss} #[{}]の形になってしまうからoss[0]
     end
 
 
