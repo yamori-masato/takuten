@@ -53,6 +53,7 @@ class Activity::Nonregular < Onetime
 
     private
         def validate_triple_booking
+            return if self.time_start.nil? || self.time_end.nil?
             os = one_day_occurrences(date)#その日の全ての予定(hash配列)
             if os.find_all{|o| o[:time_start] == time_start_f && o[:time_end] == time_end_f }.length >= 2
                 errors.add(:base,'そのコマは既に他の予約で埋まっています。')
@@ -60,6 +61,7 @@ class Activity::Nonregular < Onetime
         end
 
         def validate_cannot_book_at_the_same_time
+            return if self.time_start.nil? || self.time_end.nil?
             os = one_day_occurrences(date)#その日の全ての予定(hash配列)
             if !os.find_all{|o| o[:time_start] == time_start_f && o[:time_end] == time_end_f && o[:band_id] == band_id}.empty?
                 errors.add(:base,"同じコマは2つ以上予約できません。")
@@ -75,7 +77,7 @@ class Activity::Nonregular < Onetime
         end
         def section_index
             if self.index.presence
-                self.time_start, self.time_end = timetable(self.date_start).section(self.index)
+                self.time_start, self.time_end = timetable(self.date_start).section(self.index.to_i)
             end
         end
 

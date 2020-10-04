@@ -86,6 +86,7 @@ class Activity::Regular < Recurring
     private
         #繰り返しのどこかで予約が2つある、又は自身のバンドの非正規コマと被る場合、そこだけ外す(ExceptionTimeを作成する)。
         def create_exception_if_already_booked
+            return if self.time_start.nil? || self.time_end.nil?
             last = Onetime.maximum(:date)
             if last #1つもデータがない時nilを返す
                 occurs_between(date_start,last).each do |occurrence|#日付
