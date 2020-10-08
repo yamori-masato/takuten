@@ -51,7 +51,6 @@ class Timetable < ApplicationRecord
     SECTION = Timetable::SECTION_F.map{|s| s.map{|t| Time.parse(t)}}
 
 
-
     private
         # ApplicationRecord#serializeによるデメリット(細かくバリデーションしなければならない)
         def validate_section_format
