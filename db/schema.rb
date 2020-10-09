@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_140148) do
+ActiveRecord::Schema.define(version: 2020_10_09_170725) do
 
   create_table "bands", force: :cascade do |t|
     t.string "name", null: false
@@ -28,17 +28,6 @@ ActiveRecord::Schema.define(version: 2020_09_16_140148) do
     t.index ["recurring_id"], name: "index_exception_times_on_recurring_id"
   end
 
-  create_table "onetimes", force: :cascade do |t|
-    t.date "date", null: false
-    t.time "time_start", null: false
-    t.time "time_end", null: false
-    t.integer "band_id"
-    t.string "type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["band_id"], name: "index_onetimes_on_band_id"
-  end
-
   create_table "recurrings", force: :cascade do |t|
     t.date "date_start", null: false
     t.date "date_end"
@@ -49,6 +38,17 @@ ActiveRecord::Schema.define(version: 2020_09_16_140148) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["band_id"], name: "index_recurrings_on_band_id"
+  end
+
+  create_table "singles", force: :cascade do |t|
+    t.date "date", null: false
+    t.time "time_start", null: false
+    t.time "time_end", null: false
+    t.integer "band_id"
+    t.string "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["band_id"], name: "index_singles_on_band_id"
   end
 
   create_table "timetables", force: :cascade do |t|

@@ -1,4 +1,4 @@
-class Activity::Nonregular < Onetime
+class Activity::Nonregular < Single
     include ActivityMixin
     validate :validate_triple_booking
     validate :validate_cannot_book_at_the_same_time

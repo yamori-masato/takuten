@@ -1,4 +1,4 @@
-class Onetime < ApplicationRecord
+class Single < ApplicationRecord
   with_options presence: true do
       validates :date
       validates :time_start
