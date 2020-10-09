@@ -64,7 +64,7 @@ class Activity::Regular < Recurring
         end
     end
 
-    def date_start
+    def date
         attributes["date_start"]
     end
 

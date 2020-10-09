@@ -33,7 +33,7 @@ module DisplayableOnTheCalendar
         raise NotImplementedError
     end
 
-    def date_start
+    def date
         raise NotImplementedError
     end
 
@@ -53,7 +53,7 @@ module DisplayableOnTheCalendar
         # Timetableの区分に一致を強制
         def validate_time_should_fit_the_section
             return if time_start.nil? || time_end.nil?
-            unless timetable(date_start).section_index(time_start, time_end)
+            unless timetable(date).section_index(time_start, time_end)
                 errors.add(:base, "time_start and time_end must fit timetable's section")
             end
         end

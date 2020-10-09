@@ -33,8 +33,8 @@ class Activity::Nonregular < Onetime
     end
     
 
-    def date_start
-        date
+    def date
+        attributes["date"]
     end
 
     def time_start
@@ -77,7 +77,7 @@ class Activity::Nonregular < Onetime
         end
         def section_index
             if self.index.presence
-                self.time_start, self.time_end = timetable(self.date_start).section(self.index.to_i)
+                self.time_start, self.time_end = timetable(self.date).section(self.index.to_i)
             end
         end
 
