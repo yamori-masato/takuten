@@ -5,8 +5,6 @@ class Activity::Nonregular < Single
     attr_accessor :index
     before_validation :string_to_date, :string_to_time, :section_index
 
-    scope :ds_lteq, -> (date){ where(self.arel_table[:date].lteq(date)) } # date >= :date
-    scope :ds_gteq, -> (date){ where(self.arel_table[:date].gteq(date)) } # date <= :date
 
     include DisplayableOnTheCalendar
     # start~endまでに存在する非正規コマのイベントをhashで返す

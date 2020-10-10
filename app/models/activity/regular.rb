@@ -2,10 +2,6 @@ class Activity::Regular < Recurring
     include ActivityMixin
     after_create :create_exception_if_already_booked
 
-    scope :ds_lteq, -> (date){ where(self.arel_table[:date_start].lteq(date)) } # date >= :date_start
-    scope :ds_gteq, -> (date){ where(self.arel_table[:date_start].gteq(date)) } # date <= :date_start
-    scope :de_lteq, -> (date){ where(self.arel_table[:date_end].lteq(date)) } # date >= :date_end
-    scope :de_gteq, -> (date){ where(self.arel_table[:date_end].gteq(date)) } # date <= :date_end
 
     #指定期間中の該当する日付のリストを返す。例 ["2020-09-02", "2020-09-09", ...]
     def occurs_between(st,ed)
